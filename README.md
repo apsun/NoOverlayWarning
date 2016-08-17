@@ -1,8 +1,9 @@
 # NoOverlayWarning
 
-Bypasses Android's screen overlay detection feature. Useful if you have
-Facebook Messenger/f.lux/other overlay apps that prevent you from
-installing apps or granting permissions.
+Bypasses Android's screen overlay detection feature in the APK installer
+and permission request dialogs. Useful if you have Facebook Messenger/
+f.lux/other overlay apps that prevent you from installing apps or granting
+permissions.
 
 **WARNING: This feature exists for a reason! Do NOT install this
 module unless you know exactly what you are doing!** The author

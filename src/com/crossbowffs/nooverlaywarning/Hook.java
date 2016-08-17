@@ -34,7 +34,10 @@ public class Hook implements IXposedHookLoadPackage {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 int flags = (Integer)param.getResult();
-                flags &= ~MotionEvent.FLAG_WINDOW_IS_OBSCURED;
+                if ((flags & MotionEvent.FLAG_WINDOW_IS_OBSCURED) != 0) {
+                    flags &= ~MotionEvent.FLAG_WINDOW_IS_OBSCURED;
+                    Log.i(TAG, "Cleared FLAG_WINDOW_IS_OBSCURED flag");
+                }
                 param.setResult(flags);
             }
         });

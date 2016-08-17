@@ -9,7 +9,7 @@
             android:value="true"/>
         <meta-data
             android:name="xposeddescription"
-            android:value="Bypasses the screen overlay detected dialog"/>
+            android:value="Bypasses the screen overlay detection feature"/>
         <meta-data
             android:name="xposedminversion"
             android:value="53"/>
