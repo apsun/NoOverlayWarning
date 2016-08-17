@@ -1,6 +1,7 @@
 package com.crossbowffs.nooverlaywarning;
 
 import android.util.Log;
+import android.view.MotionEvent;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
@@ -8,22 +9,35 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class Hook implements IXposedHookLoadPackage {
     private static final String TAG = "NoOverlayWarning";
+    private static final String[] INSTALLER_PACKAGE_NAMES = {
+        "com.android.packageinstaller",        // Pre-Marshmallow
+        "com.google.android.packageinstaller", // Marshmallow
+        "com.mokee.packageinstaller"           // MoKee
+    };
+
+    private static boolean arrayContains(String[] array, String value) {
+        for (String test : array) {
+            if (test.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        if (!"com.google.android.packageinstaller".equals(lpparam.packageName)) {
+        if (!arrayContains(INSTALLER_PACKAGE_NAMES, lpparam.packageName)) {
             return;
         }
 
-        XposedHelpers.findAndHookMethod(
-            "com.android.packageinstaller.permission.ui.OverlayTouchActivity", lpparam.classLoader,
-            "isObscuredTouch", new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    Log.i(TAG, "isObscuredTouch() -> false");
-                    param.setResult(false);
-                }
-            });
+        XposedHelpers.findAndHookMethod(MotionEvent.class, "getFlags", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                int flags = (Integer)param.getResult();
+                flags &= ~MotionEvent.FLAG_WINDOW_IS_OBSCURED;
+                param.setResult(flags);
+            }
+        });
 
         Log.i(TAG, "NoOverlayWarning successfully initialized!");
     }
