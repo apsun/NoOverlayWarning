@@ -14,6 +14,7 @@ public class Hook implements IXposedHookLoadPackage {
         "com.google.android.packageinstaller", // Marshmallow
         "com.mokee.packageinstaller"           // MoKee
     };
+    private static final int FLAG_WINDOW_IS_PARTIALLY_OBSCURED = 0x2;
 
     private static boolean arrayContains(String[] array, String value) {
         for (String test : array) {
@@ -38,10 +39,17 @@ public class Hook implements IXposedHookLoadPackage {
                     flags &= ~MotionEvent.FLAG_WINDOW_IS_OBSCURED;
                     Log.i(TAG, "Cleared FLAG_WINDOW_IS_OBSCURED flag");
                 }
+
+                // New flag secretly added in Android 6.0.1 it seems
+                // https://android.googlesource.com/platform/frameworks/native/+/03a53d1c7765eeb3af0bc34c3dff02ada1953fbf%5E!/
+                if ((flags & FLAG_WINDOW_IS_PARTIALLY_OBSCURED) != 0) {
+                    flags &= ~FLAG_WINDOW_IS_PARTIALLY_OBSCURED;
+                    Log.i(TAG, "Cleared FLAG_WINDOW_IS_PARTIALLY_OBSCURED flag");
+                }
                 param.setResult(flags);
             }
         });
 
-        Log.i(TAG, "NoOverlayWarning successfully initialized!");
+        Log.i(TAG, "NoOverlayWarning initialized in package: " + lpparam.packageName);
     }
 }
