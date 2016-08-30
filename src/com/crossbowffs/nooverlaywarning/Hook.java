@@ -40,7 +40,7 @@ public class Hook implements IXposedHookLoadPackage {
         if (arrayContains(KNOWN_PACKAGE_INSTALLERS, packageName)) {
             return true;
         }
-        if ((packageName.endsWith(".packageinstaller"))) {
+        if (packageName.endsWith(".packageinstaller")) {
             Log.w(TAG, "Unknown package installer name: " + packageName);
             return HOOK_ALL_PACKAGE_INSTALLERS;
         }
